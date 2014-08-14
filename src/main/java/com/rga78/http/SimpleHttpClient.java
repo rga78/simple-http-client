@@ -6,14 +6,18 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 /**
  * Very simple http client featuring a fluent API.
  * 
  * Example usage: send a "GET" request to "http://myhost:8080/my/uri/path" and return
- * the response as a List<String> (one per line):
+ * the response as a {@code List<String>} (one per line):
  * 
  * <pre><code>
- *  List<String> response = new SimpleHttpClient()
+ *  List&lt;String&gt; response = new SimpleHttpClient()
  *                                   .setTarget( "http://myhost:8080" )
  *                                   .path("my/uri")
  *                                   .path("path")
@@ -231,6 +235,13 @@ public class SimpleHttpClient {
     }
 
     /**
+     * Note: if in system properties, rga78.http.disableHostnameVerification="true", 
+     *       then the code assumes it's an SSL connection, and disables ssl certificate
+     *       hostname verification of the target server's SSL certificate.
+     * 
+     * TODO: make this an option on SimpleHttpClient rather than a system property.
+     *       e.g: new SimpleHttpClient().disableHostnameVerification()...
+     *
      * @return an HttpUrlConnection using the given requestMethod (e.g. "GET", "POST", etc).
      */
     protected HttpURLConnection getConnection(String requestMethod ) throws IOException {
@@ -239,7 +250,25 @@ public class SimpleHttpClient {
         con.setDoOutput(true);  // should i bother setting this to false for GETs?
         con.setUseCaches(false);
         con.setRequestMethod( requestMethod );
+        
+        if (Boolean.getBoolean("rga78.http.disableHostnameVerification")) {
+            disableHostnameVerification((HttpsURLConnection) con);
+        }
+        
         // TODO: con.setConnectTimeout(timeout);
+        return con;
+    }
+    
+    /**
+     * @return con, with hostname verification disabled.
+     */
+    protected HttpsURLConnection disableHostnameVerification(HttpsURLConnection con) {
+        con.setHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        });
         return con;
     }
 
