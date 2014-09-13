@@ -18,6 +18,10 @@ public class StringEntityReader implements EntityReader<List<String>> {
 
         List<String> retMe = new ArrayList<String>();
         
+        if (entityStream == null) {
+            return retMe;
+        }
+        
         String line;
         BufferedReader br = new BufferedReader(new InputStreamReader(entityStream, Charset.forName("UTF-8")));
         while ( (line = br.readLine()) != null ) {

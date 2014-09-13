@@ -3,6 +3,7 @@ package com.rga78.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.List;
 
 /**
  * An HTTP Response object.  It contains methods for reading the HTTP response.
@@ -33,9 +34,9 @@ public class Response {
     }
     
     /**
-     * 
+     * @return HttpURLConnection.getInputStream()
      */
-    protected InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() throws IOException {
         try {
             return con.getInputStream();
         } catch (IOException e) {
@@ -45,10 +46,24 @@ public class Response {
     }
     
     /**
+     * Read any error response from the connection and include it in the thrown exception.
      * 
+     * @throws IOException
      */
     protected void handleFailureResponse(IOException e) throws IOException {
-        throw new IOException( e.getMessage() + ": " + new StringEntityReader().readEntity( con.getErrorStream() ).toString(), e);
+        List<String> errorResponse = new StringEntityReader().readEntity( con.getErrorStream() );
+        if (errorResponse.isEmpty()) {
+            throw e;    // No additional error info.
+        } else {
+            throw new IOException( e.getMessage() + ": " + errorResponse.toString(), e);
+        }
+    }
+
+    /**
+     * @return HttpURLConnection.getHeaderField()
+     */
+    public String getHeader(String name) {
+        return con.getHeaderField(name);
     }
             
 }

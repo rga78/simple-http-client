@@ -54,6 +54,11 @@ public class SimpleHttpClient {
      */
     private Map<String, String> queryParams = new HashMap<String, String>();
 
+    /**
+     * The connect and read timeout. The same timeout value is applied to both
+     * the connect and read operations. 
+     */
+    private int timeout_ms = 0;
 
     /**
      * Set the target.
@@ -74,6 +79,16 @@ public class SimpleHttpClient {
         return target;
     }
 
+    /**
+     * @param the timeout value, in ms, to be applied to both the connect and read operations.
+     * 
+     * @return this
+     */
+    public SimpleHttpClient setTimeout(int timeout_ms) {
+        this.timeout_ms = timeout_ms;
+        return this;
+    }
+    
     /**
      * Append the given appendPath to the path.
      *
@@ -255,7 +270,9 @@ public class SimpleHttpClient {
             disableHostnameVerification((HttpsURLConnection) con);
         }
         
-        // TODO: con.setConnectTimeout(timeout);
+        con.setConnectTimeout(timeout_ms);
+        con.setReadTimeout(timeout_ms);
+        
         return con;
     }
     

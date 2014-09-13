@@ -13,6 +13,8 @@ import com.rga78.http.junit.CaptureSystemOutRule;
 import com.rga78.http.log.Log;
 
 /**
+ * TODO: need a test server to invoke against...  could probably fluff something up with jetty.
+ *
  * Unit tests..
  */
 public class SimpleHttpClientTest {
