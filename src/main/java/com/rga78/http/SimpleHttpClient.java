@@ -221,6 +221,17 @@ public class SimpleHttpClient {
     }
     
     /**
+     * Execute a DELETE request.
+     *
+     * @return a Response object for reading the response
+     */
+    public Response delete() throws IOException {
+        HttpURLConnection con = setHeaders( getConnection("DELETE") );
+        con.connect();
+        return new Response(con);
+    }
+    
+    /**
      * Both PUTs and POSTs route to here.
      * 
      * @return a Response object for reading the response

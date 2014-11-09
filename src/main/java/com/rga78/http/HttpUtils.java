@@ -1,5 +1,6 @@
 package com.rga78.http;
 
+import com.rga78.http.utils.StringUtils;
 
 public class HttpUtils {
     
@@ -15,7 +16,7 @@ public class HttpUtils {
      */
     public static String parseHeaderParameter(String headerValue, String parmName) {
         
-        if (isEmpty(headerValue)) {
+        if (StringUtils.isEmpty(headerValue)) {
             return null;
         }
         
@@ -26,13 +27,6 @@ public class HttpUtils {
         }
         
         return null;
-    }
-
-    /**
-     * @return true if (s == null || s.trim().isEmpty())
-     */
-    protected static boolean isEmpty( String s) {
-        return (s == null || s.trim().isEmpty());
     }
 
 }
