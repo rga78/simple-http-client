@@ -66,4 +66,30 @@ public class Response {
         return con.getHeaderField(name);
     }
             
+    /**
+     * Write the response to the given OutputStream.
+     * 
+     * If the response is plain text, be mindful of char encoding.
+     * If no char-encoding is specified, default to UTF-8.
+     * 
+     * @param outputStream write the response to this stream
+     */
+    public void copyToStream( OutputStream outputStream) throws IOException {
+        
+        String contentType = getHeader("Content-Type");
+        
+        if ( contentType.contains("text/plain") ) {
+            // Plain text response.  Handle the char encoding.
+            String charsetName = ObjectUtils.firstNonNull( HttpUtils.parseHeaderParameter(contentType, "charset"), "UTF-8");
+            
+            // The OutputStreamWriter deliberately uses the default platform encoding because,
+            // well, what else should we use?
+            IOUtils.copyReader( new InputStreamReader( getInputStream(), charsetName),
+                                new OutputStreamWriter(outputStream) );
+        } else {
+            // Binary response.  Copy as-is.
+            IOUtils.copyStream( getInputStream(), outputStream );
+        }
+    }
+            
 }
