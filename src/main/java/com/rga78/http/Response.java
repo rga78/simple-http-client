@@ -2,8 +2,14 @@ package com.rga78.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.util.List;
+
+import com.rga78.http.utils.ObjectUtils;
+import com.rga78.http.utils.IOUtils;
 
 /**
  * An HTTP Response object.  It contains methods for reading the HTTP response.
