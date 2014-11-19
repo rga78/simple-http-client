@@ -1,6 +1,7 @@
 package com.rga78.http;
 
 import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * EntityWriters are used for marshaling an entity into an HTTP request payload.
@@ -16,6 +17,6 @@ public interface EntityWriter {
      * 
      * @param entityStream The stream to which to write the entity.
      */
-    public void writeEntity(OutputStream entityStream);
+    public void writeEntity(OutputStream entityStream) throws IOException;
 
 }

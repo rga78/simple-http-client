@@ -73,6 +73,13 @@ public class Response {
     }
             
     /**
+     * @return the underlying HttpURLConnection
+     */
+    public HttpURLConnection getHttpURLConnection() {
+        return con;
+    }
+            
+    /**
      * Write the response to the given OutputStream.
      * 
      * If the response is plain text, be mindful of char encoding.
