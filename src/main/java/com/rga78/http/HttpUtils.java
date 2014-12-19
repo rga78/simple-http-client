@@ -29,4 +29,19 @@ public class HttpUtils {
         return null;
     }
 
+    /**
+     * @return a base64-encoded "Authorization" header value.
+     */
+    public static String buildBasicAuthHeaderValue(String user, String pass) {
+        return buildBasicAuthHeaderValue(user + ":" + pass);
+    }
+
+    /**
+     * @return a base64-encoded "Authorization" header value.
+     */
+    public static String buildBasicAuthHeaderValue(String userAndPass) {
+        return "Basic " + Base64Coder.base64Encode(userAndPass);
+    }
+
+
 }

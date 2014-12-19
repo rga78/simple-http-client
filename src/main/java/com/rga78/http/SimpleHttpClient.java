@@ -10,6 +10,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
+import com.rga78.http.utils.StringUtils;
+
 /**
  * Very simple http client featuring a fluent API.
  * 
@@ -154,6 +156,20 @@ public class SimpleHttpClient {
     }
 
     /**
+     * Set the basic-auth "Authorization" header
+     *
+     * @param userAndPass in the form {user}:{pass}
+     *
+     * @return this
+     */
+    public SimpleHttpClient setBasicAuth(String userAndPass) {
+        if ( !StringUtils.isEmpty(userAndPass) ) {
+            header( "Authorization", HttpUtils.buildBasicAuthHeaderValue(userAndPass) );
+        }
+        return this;
+    }
+
+    /**
      * TODO: handle multiple values.
      * 
      * @param key parm key
@@ -187,7 +203,7 @@ public class SimpleHttpClient {
     public Response get() throws IOException {
         HttpURLConnection con = setHeaders( getConnection("GET") );
         con.connect();
-        return new Response(con);
+        return new Response(con).flush();
     }
 
     /**
@@ -228,7 +244,7 @@ public class SimpleHttpClient {
     public Response delete() throws IOException {
         HttpURLConnection con = setHeaders( getConnection("DELETE") );
         con.connect();
-        return new Response(con);
+        return new Response(con).flush();
     }
     
     /**
@@ -245,7 +261,7 @@ public class SimpleHttpClient {
             entityWriter.writeEntity( con.getOutputStream() );
         }
         con.connect();
-        return new Response(con);
+        return new Response(con).flush();
     }
 
     /**

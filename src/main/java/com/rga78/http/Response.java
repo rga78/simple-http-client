@@ -105,4 +105,26 @@ public class Response {
         }
     }
             
+    /**
+     * @return the http response code
+     */
+    public int getResponseCode() throws IOException {
+        return getHttpURLConnection().getResponseCode();
+    }
+
+    /**
+     * JDK quirkiness: the HTTP request isn't actually sent until you make 
+     * a call like getResponseCode or getInputStream on the HttpURLConnection.
+     * HttpURLConnection.connect() simply establishes the connection; it doesn't
+     * actually send the request.
+     * 
+     * This flush method forces the request by calling getResponseCode().
+     * 
+     * @return this
+     */
+    public Response flush() throws IOException {
+        getResponseCode();
+        return this;
+    }
+            
 }
