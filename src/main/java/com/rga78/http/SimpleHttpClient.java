@@ -6,9 +6,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 
 import com.rga78.http.utils.StringUtils;
 
@@ -144,7 +143,9 @@ public class SimpleHttpClient {
      * @return this.
      */
     public SimpleHttpClient header(String key, String value) {
-        headers.put(key, value);
+        if ( key != null && value != null ) {
+            headers.put(key, value);
+        }
         return this;
     }
 
@@ -190,8 +191,6 @@ public class SimpleHttpClient {
     }
 
     // TODO: pathParam
-    // TODO: trust all certs
-    // TODO: hostname verifier? (not sure this is needed if you already have trust all certs)
     // TODO: close the httpurlcon, inputstreams and whatnot?
     
 
@@ -297,6 +296,12 @@ public class SimpleHttpClient {
             disableHostnameVerification((HttpsURLConnection) con);
         }
         
+        // If -Djavax.net.ssl.keyStore is specified, then we assume the user wants to use
+        // certificate-based authentication.
+        if ( !StringUtils.isEmpty(System.getProperty("javax.net.ssl.keyStore")) && con instanceof HttpsURLConnection) {
+            ((HttpsURLConnection)con).setSSLSocketFactory( (SSLSocketFactory) SSLSocketFactory.getDefault() );
+        }
+        
         con.setConnectTimeout(timeout_ms);
         con.setReadTimeout(timeout_ms);
         
@@ -307,13 +312,40 @@ public class SimpleHttpClient {
      * @return con, with hostname verification disabled.
      */
     protected HttpsURLConnection disableHostnameVerification(HttpsURLConnection con) {
-        con.setHostnameVerifier(new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        });
+        con.setHostnameVerifier(HttpUtils.getTrustAllHostnames());
         return con;
     }
+
+
+    // TODO: trust all certs
+    //
+    // public class SSLTool {
+    // 
+    //   public static void disableCertificateValidation() {
+    //     // Create a trust manager that does not validate certificate chains
+    //     TrustManager[] trustAllCerts = new TrustManager[] { 
+    //       new X509TrustManager() {
+    //         public X509Certificate[] getAcceptedIssuers() { 
+    //           return new X509Certificate[0]; 
+    //         }
+    //         public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+    //         public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+    //     }};
+    // 
+    //     // Ignore differences between given hostname and certificate hostname
+    //     HostnameVerifier hv = new HostnameVerifier() {
+    //       public boolean verify(String hostname, SSLSession session) { return true; }
+    //     };
+    // 
+    //     // Install the all-trusting trust manager
+    //     try {
+    //       SSLContext sc = SSLContext.getInstance("SSL");
+    //       sc.init(null, trustAllCerts, new SecureRandom());
+    //       HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    //       HttpsURLConnection.setDefaultHostnameVerifier(hv);
+    //     } catch (Exception e) {}
+    //   }
+    // }
+    
 
 }

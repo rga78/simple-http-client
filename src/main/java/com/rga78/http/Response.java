@@ -89,19 +89,24 @@ public class Response {
      */
     public void copyToStream( OutputStream outputStream) throws IOException {
         
+        // Note: must get the input stream *before* checking the content-type, 
+        // in case the Response is an HTTP-302 redirect.  If it is, then getInputStream
+        // will automatically follow the redirect.
+        InputStream responseStream = getInputStream();
+        
         String contentType = getHeader("Content-Type");
         
-        if ( contentType.contains("text/plain") ) {
+        if ( contentType != null && contentType.contains("text/plain") ) {
             // Plain text response.  Handle the char encoding.
             String charsetName = ObjectUtils.firstNonNull( HttpUtils.parseHeaderParameter(contentType, "charset"), "UTF-8");
             
             // The OutputStreamWriter deliberately uses the default platform encoding because,
             // well, what else should we use?
-            IOUtils.copyReader( new InputStreamReader( getInputStream(), charsetName),
+            IOUtils.copyReader( new InputStreamReader(responseStream, charsetName),
                                 new OutputStreamWriter(outputStream) );
         } else {
             // Binary response.  Copy as-is.
-            IOUtils.copyStream( getInputStream(), outputStream );
+            IOUtils.copyStream( responseStream, outputStream );
         }
     }
             
