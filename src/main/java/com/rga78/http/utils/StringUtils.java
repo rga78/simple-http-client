@@ -10,5 +10,17 @@ public class StringUtils {
         return (s == null || s.trim().isEmpty());
     }
 
+    /**
+     * @return the first String that isn't empty, or null if they're all empty
+     */
+    public static String firstNonEmpty(String... strs) {
+        for (String s : strs) {
+            if ( !isEmpty(s) ) {
+                return s;
+            }
+        }
+        return null;
+    }
+
 }
 

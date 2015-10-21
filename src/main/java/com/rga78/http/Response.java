@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.util.List;
 
-import com.rga78.http.utils.ObjectUtils;
+import com.rga78.http.utils.StringUtils;
 import com.rga78.http.utils.IOUtils;
 
 /**
@@ -71,6 +71,13 @@ public class Response {
     public String getHeader(String name) {
         return con.getHeaderField(name);
     }
+
+    /**
+     * @return the HttpURLConnection
+     */
+    public HttpURLConnection getConnection() {
+        return getHttpURLConnection();
+    }
             
     /**
      * @return the underlying HttpURLConnection
@@ -98,7 +105,7 @@ public class Response {
         
         if ( contentType != null && contentType.contains("text/plain") ) {
             // Plain text response.  Handle the char encoding.
-            String charsetName = ObjectUtils.firstNonNull( HttpUtils.parseHeaderParameter(contentType, "charset"), "UTF-8");
+            String charsetName = StringUtils.firstNonEmpty( HttpUtils.parseHeaderParameter(contentType, "charset"), "UTF-8");
             
             // The OutputStreamWriter deliberately uses the default platform encoding because,
             // well, what else should we use?

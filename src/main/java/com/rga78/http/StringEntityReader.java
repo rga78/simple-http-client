@@ -13,6 +13,11 @@ import java.util.List;
  */
 public class StringEntityReader implements EntityReader<List<String>> {
 
+    /**
+     * @param entityStream Note: entityStream is closed at end of method.
+     * 
+     * @return List<String> - the contents of the entityStream, one entry per line.
+     */
     @Override
     public List<String> readEntity(InputStream entityStream) throws IOException {
 
@@ -28,6 +33,7 @@ public class StringEntityReader implements EntityReader<List<String>> {
             retMe.add(line);
         }
         
+        entityStream.close();
         return retMe;
     }
 

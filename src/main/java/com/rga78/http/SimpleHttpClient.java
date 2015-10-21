@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -203,6 +204,20 @@ public class SimpleHttpClient {
         HttpURLConnection con = setHeaders( getConnection("GET") );
         con.connect();
         return new Response(con).flush();
+    }
+
+    /**
+     * Execute a GET request and return the plain-text response.
+     * 
+     * @return the plain-text response
+     */
+    public List<String> getTextResponse() throws IOException {
+        
+        Response response = get();
+        List<String> retMe = response.readEntity( new StringEntityReader() );
+        response.getConnection().disconnect();
+        
+        return retMe;
     }
 
     /**
