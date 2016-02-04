@@ -24,7 +24,7 @@ public class Response {
     /**
      * CTOR.
      */
-    protected Response(HttpURLConnection con) {
+    public Response(HttpURLConnection con) {
         this.con = con;
     }
 
